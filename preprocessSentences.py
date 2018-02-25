@@ -134,7 +134,7 @@ def main(argv):
     elif opt in ("-v", "--vocabfile"):
       vocabf = arg
 
-  traintxt = path+"/test.txt"
+  traintxt = path+"/train3000.txt"
   print 'Path:', path
   print 'Training data:', traintxt
 
