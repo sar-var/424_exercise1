@@ -124,23 +124,21 @@ def tokenize_corpus(path, train=True):
     # !! experiment with window size for accuracy
     finder = BigramCollocationFinder.from_words(tokens, window_size = 3)
     # !! experiment with frequency count for accuracy 
-    bigrams = finder.apply_freq_filter(2)
+    finder.apply_freq_filter(2)
     # !! understand pmi filter 
-    bigrams = finder.nbest(bigram_measures.pmi, 10)
+    # bigrams = finder.nbest(bigram_measures.pmi, 10)
     
-    for k,v in finder.ngram_fd.items():
-        print(k,v)
+    #for k,v in finder.ngram_fd.items():
+        #print(k,v)
 
-    # append is not working, redo
-    #print bigrams
+    for k in finder.ngram_fd.items(0):
+      print(k)
+
     # ---------------------------------------------------------
 
     if train == True:
         # add to word count frequency
       for t in tokens: 
-        # convert bigram tuple to string
-        if isinstance(t, (list,)):
-            t = ' '.join(str(d) for d in t)
         try:
             words[t] = words[t]+1
         except:

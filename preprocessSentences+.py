@@ -1,4 +1,6 @@
 
+# -----------------------------
+# code does not currently work, fixbigram portion using prepreprocess before running
 # coding: utf-8
 
 # In[ ]:
@@ -23,12 +25,16 @@ from nltk.collocations import BigramCollocationFinder
 from nltk.metrics import BigramAssocMeasures
 # https://streamhacker.com/2010/05/24/text-classification-sentiment-analysis-stopwords-collocations/
 
+# spellcheck library
+from autocorrect import spell
 
 # In[ ]:
 
 
 chars = ['{','}','#','%','&','\(','\)','\[','\]','<','>',',', '!', '.', ';', 
 '?', '*', '\\', '\/', '~', '_','|','=','+','^',':','\"','\'','@','-']
+chars2 = ['{','}','#','%','&','\(','\)','\[','\]','<','>',',', '.', ';', 
+'*', '\\', '\/', '~', '_','|','=','+','^',':','\"','\'','@','-']
 
 
 # In[ ]:
@@ -82,7 +88,18 @@ def read_bagofwords_dat(myfile):
 # In[ ]:
 
 
+
 def tokenize_corpus(path, train=True):
+
+  # hardcode the bag of words variation 
+  var = 7;
+  # var1 - simple
+  # var2 - lowercase
+  # var3 - lowercase + no punctuation, except '!' and '?'
+  # var4 - lowercase + no punctuation
+  # var5 - lowercase + no punctuation + stopwords
+  # var6 - lowercase + no punctuation + stopwords + stems/lemmas
+  # var7 - lowercase + no punctuation + stopwords + stems/lemmas + spellcheck
 
   # used to stem words later on/get roots of words
   porter = nltk.PorterStemmer() # also lancaster stemmer
@@ -104,21 +121,38 @@ def tokenize_corpus(path, train=True):
     samples.append(line.rsplit()[0])
     raw = line.decode('latin1')
     raw = ' '.join(raw.rsplit()[1:-1])
+
+    if (var == 3):
+    # remove noise characters, except for '!' and '?'
+      raw = re.sub('[%s]' % ''.join(chars2), ' ', raw)
+
+    if (var > 3):
     # remove noisy characters; tokenize - specified at the start
-    raw = re.sub('[%s]' % ''.join(chars), ' ', raw)
+      raw = re.sub('[%s]' % ''.join(chars), ' ', raw)
+
     tokens = word_tokenize(raw)
+    
+    if (var > 1):
     # make lower case - !! consider all capitals as more positive or negative?
     # !! what if we didn't do this?
-    tokens = [w.lower() for w in tokens]
+      tokens = [w.lower() for w in tokens]
+
+    if (var > 6):
+    # perform spell check - before stems,lemmas and stopwords
+      tokens = [spell(w) for w in tokens]
+
+    if (var > 4):
     # removing stopwords
     # using python stopwords scripts - !! add manually to stopwords?
     # !! what if we didn't do this?
-    tokens = [w for w in tokens if w not in stopWords]
+      tokens = [w for w in tokens if w not in stopWords]
+
+    if (var > 5):
     # first lemmatize then stem, significance?
     # !! what if we didn't do this? - lemmatize
-    tokens = [wnl.lemmatize(t) for t in tokens]
-    # !! what if we didn't do this? - stem
-    tokens = [porter.stem(t) for t in tokens] 
+      tokens = [wnl.lemmatize(t) for t in tokens]
+    # !! what if we didn't do this? - stem    
+      tokens = [porter.stem(t) for t in tokens] 
 
     # !! add bigram collocations here
     # tokens = bigram_tokenize_corpus(tokens, BigramAssocMeasures.chi_sq, 200)
@@ -218,7 +252,8 @@ def main(argv):
     elif opt in ("-v", "--vocabfile"):
       vocabf = arg
 
-  traintxt = path+"/train3000.txt"
+  # !! edit for train data!!!
+  traintxt = path+"/train.txt"
   print 'Path:', path
   print 'Training data:', traintxt
 

@@ -1,0 +1,60 @@
+Sairas-MacBook-Pro:424_exercise1 sarahvarghese$ python ./preprocessSentences+.py -p . -o var1
+Path: .
+Training data: ./train.txt
+Vocab length: 649
+Vocabulary file: ./var1_vocab_5.txt
+Finished find_wordcounts for: 2400 docs
+Doc with smallest number of words in vocab has: 0
+Output files: ./var1*
+Runtime: 1.84162211418
+
+Sairas-MacBook-Pro:424_exercise1 sarahvarghese$ python ./preprocessSentences+.py -p . -o var2
+Path: .
+Training data: ./train.txt
+Vocab length: 631
+Vocabulary file: ./var2_vocab_5.txt
+Finished find_wordcounts for: 2400 docs
+Doc with smallest number of words in vocab has: 0
+Output files: ./var2*
+Runtime: 1.68183994293
+
+Sairas-MacBook-Pro:424_exercise1 sarahvarghese$ python ./preprocessSentences+.py -p . -o var3
+Path: .
+Training data: ./train.txt
+Vocab length: 639
+Vocabulary file: ./var3_vocab_5.txt
+Finished find_wordcounts for: 2400 docs
+Doc with smallest number of words in vocab has: 0
+Output files: ./var3*
+Runtime: 1.67244911194
+
+Sairas-MacBook-Pro:424_exercise1 sarahvarghese$ python ./preprocessSentences+.py -p . -o var4
+Path: .
+Training data: ./train.txt
+Vocab length: 637
+Vocabulary file: ./var4_vocab_5.txt
+Finished find_wordcounts for: 2400 docs
+Doc with smallest number of words in vocab has: 0
+Output files: ./var4*
+Runtime: 1.54238796234
+
+Sairas-MacBook-Pro:424_exercise1 sarahvarghese$ python ./preprocessSentences+.py -p . -o var5
+Path: .
+Training data: ./train.txt
+Vocab length: 516
+Vocabulary file: ./var5_vocab_5.txt
+Finished find_wordcounts for: 2400 docs
+Doc with smallest number of words in vocab has: 0
+Output files: ./var5*
+Runtime: 1.61602592468
+
+Sairas-MacBook-Pro:424_exercise1 sarahvarghese$ python ./preprocessSentences+.py -p . -o var6
+Path: .
+Training data: ./train.txt
+Vocab length: 541
+Vocabulary file: ./var6_vocab_5.txt
+Finished find_wordcounts for: 2400 docs
+Doc with smallest number of words in vocab has: 0
+Output files: ./var6*
+Runtime: 5.88745689392
+Sairas-MacBook-Pro:424_exercise1 sarahvarghese$ 
