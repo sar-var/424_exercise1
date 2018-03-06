@@ -57,4 +57,94 @@ Finished find_wordcounts for: 2400 docs
 Doc with smallest number of words in vocab has: 0
 Output files: ./var6*
 Runtime: 5.88745689392
-Sairas-MacBook-Pro:424_exercise1 sarahvarghese$ 
+
+Sairas-MacBook-Pro:424_exercise1 sarahvarghese$ python ./preprocessSentences+.py -p . -o var7
+Path: .
+Training data: ./train.txt
+Vocab length: 536
+Vocabulary file: ./var7_vocab_5.txt
+Finished find_wordcounts for: 2400 docs
+Doc with smallest number of words in vocab has: 0
+Output files: ./var7*
+Runtime: 40.8985569477
+
+
+
+
+TESTING RESULTS
+Sairas-MacBook-Pro:bow_variations sarahvarghese$ cd 1_simple/
+Sairas-MacBook-Pro:1_simple sarahvarghese$ python ./preprocessSentences+.py -p . -o test1 -v var1_vocab_5.txt
+Path: .
+Training data: ./test.txt
+Vocabulary file: ./var1_vocab_5.txt
+Finished find_wordcounts for: 600 docs
+Doc with smallest number of words in vocab has: 0
+Output files: ./test1*
+Runtime: 13.9269061089
+Sairas-MacBook-Pro:1_simple sarahvarghese$ cd ..
+Sairas-MacBook-Pro:bow_variations sarahvarghese$ cd 2_lowercase/
+Sairas-MacBook-Pro:2_lowercase sarahvarghese$ python ./preprocessSentences+.py -p . -o test2 -v var2_vocab_5.txt
+/Library/Frameworks/Python.framework/Versions/2.7/Resources/Python.app/Contents/MacOS/Python: can't open file './preprocessSentences+.py': [Errno 2] No such file or directory
+Sairas-MacBook-Pro:2_lowercase sarahvarghese$ python ./preprocessSentences+.py -p . -o test2 -v var2_vocab_5.txt
+Path: .
+Training data: ./test.txt
+Vocabulary file: ./var2_vocab_5.txt
+Finished find_wordcounts for: 600 docs
+Doc with smallest number of words in vocab has: 0
+Output files: ./test2*
+Runtime: 15.0198130608
+Sairas-MacBook-Pro:2_lowercase sarahvarghese$ cd ..
+Sairas-MacBook-Pro:bow_variations sarahvarghese$ cd 3_only\ exclamation\:question\ marks_lowerc/
+Sairas-MacBook-Pro:3_only exclamation:question marks_lowerc sarahvarghese$ python ./preprocessSentences+.py -p . -o test3 -v var3_vocab_5.txt
+/Library/Frameworks/Python.framework/Versions/2.7/Resources/Python.app/Contents/MacOS/Python: can't open file './preprocessSentences+.py': [Errno 2] No such file or directory
+Sairas-MacBook-Pro:3_only exclamation:question marks_lowerc sarahvarghese$ python ./preprocessSentences+.py -p . -o test3 -v var3_vocab_5.txt
+Path: .
+Training data: ./test.txt
+Vocabulary file: ./var3_vocab_5.txt
+Finished find_wordcounts for: 600 docs
+Doc with smallest number of words in vocab has: 0
+Output files: ./test3*
+Runtime: 15.0047550201
+Sairas-MacBook-Pro:3_only exclamation:question marks_lowerc sarahvarghese$ cd ..
+Sairas-MacBook-Pro:bow_variations sarahvarghese$ cd 4_no\ punc_lowerc/
+Sairas-MacBook-Pro:4_no punc_lowerc sarahvarghese$ python ./preprocessSentences+.py -p . -o test4 -v var4_vocab_5.txt
+Path: .
+Training data: ./test.txt
+Vocabulary file: ./var4_vocab_5.txt
+Finished find_wordcounts for: 600 docs
+Doc with smallest number of words in vocab has: 0
+Output files: ./test4*
+Runtime: 14.6718502045
+Sairas-MacBook-Pro:4_no punc_lowerc sarahvarghese$ cd ..
+Sairas-MacBook-Pro:bow_variations sarahvarghese$ cd 5_stopwords_nopunc_lowerc/
+Sairas-MacBook-Pro:5_stopwords_nopunc_lowerc sarahvarghese$ python ./preprocessSentences+.py -p . -o test5 -v var5_vocab_5.txt
+Path: .
+Training data: ./test.txt
+Vocabulary file: ./var5_vocab_5.txt
+Finished find_wordcounts for: 600 docs
+Doc with smallest number of words in vocab has: 0
+Output files: ./test5*
+Runtime: 14.1483118534
+Sairas-MacBook-Pro:5_stopwords_nopunc_lowerc sarahvarghese$ cd ..
+Sairas-MacBook-Pro:bow_variations sarahvarghese$ cd 6_stemlem_stopwords_nopunc_lowerc/
+Sairas-MacBook-Pro:6_stemlem_stopwords_nopunc_lowerc sarahvarghese$ python ./preprocessSentences+.py -p . -o test6 -v var6_vocab_5.txt
+Path: .
+Training data: ./test.txt
+Vocabulary file: ./var6_vocab_5.txt
+Finished find_wordcounts for: 600 docs
+Doc with smallest number of words in vocab has: 0
+Output files: ./test6*
+Runtime: 13.8592450619
+Sairas-MacBook-Pro:6_stemlem_stopwords_nopunc_lowerc sarahvarghese$ cd ..
+Sairas-MacBook-Pro:bow_variations sarahvarghese$ cd 7_spellcheck_stopw_stemlem_nopunc_lowerc/
+Sairas-MacBook-Pro:7_spellcheck_stopw_stemlem_nopunc_lowerc sarahvarghese$ python ./preprocessSentences+.py -p . -o test7 -v var7_vocab_5.txt
+Path: .
+Training data: ./test.txt
+Vocabulary file: ./var7_vocab_5.txt
+Finished find_wordcounts for: 600 docs
+Doc with smallest number of words in vocab has: 0
+Output files: ./test7*
+Runtime: 14.0755000114
+Sairas-MacBook-Pro:7_spellcheck_stopw_stemlem_nopunc_lowerc sarahvarghese$ 
+
+
