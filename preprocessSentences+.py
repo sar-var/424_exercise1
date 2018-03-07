@@ -1,9 +1,23 @@
 
-# -----------------------------
-# code does not currently work, fixbigram portion using prepreprocess before running
-# coding: utf-8
+# ----------------------------------------------------------
+# preprocessSentences+.py
+# code used from the following sources:
+# https://streamhacker.com/2010/05/24/text-classification-sentiment-analysis-stopwords-collocations/
+# https://stevenloria.com/tf-idf/
+# https://docs.scipy.org/doc/numpy/reference (for dealing with sparse matrices)
+#
+# Program is run using the following command. The txt file with review documents 
+# as well as the featur extraction variation number is hard coded
+# Along with previously specified files, the program also returns an npz file with 
+# a sparse matrix of TF-IDF scores.
+# python ./preprocessSentences+.py -p . -o var7 
+# python ./preprocessSentences+.py -p . -o test -v var1_vocab_5.txt
+# ----------------------------------------------------------
 
 # In[ ]:
+
+# loading the npz file to run classifiers:
+# data = np.load('123.npz')
 
 
 import nltk, re, pprint
@@ -20,19 +34,30 @@ import time
 import os
 import csv
 
+# -- bigram imports --
 import itertools
-from nltk.collocations import BigramCollocationFinder
 from nltk.metrics import BigramAssocMeasures
-# https://streamhacker.com/2010/05/24/text-classification-sentiment-analysis-stopwords-collocations/
 
 # spellcheck library
 from autocorrect import spell
+
+# -- TF-IDF imports --
+import math
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfTransformer
+import scipy.sparse
+
+# -- bigram imports --
+import nltk
+from nltk.collocations import *
+
 
 # In[ ]:
 
 
 chars = ['{','}','#','%','&','\(','\)','\[','\]','<','>',',', '!', '.', ';', 
 '?', '*', '\\', '\/', '~', '_','|','=','+','^',':','\"','\'','@','-']
+
 chars2 = ['{','}','#','%','&','\(','\)','\[','\]','<','>',',', '.', ';', 
 '*', '\\', '\/', '~', '_','|','=','+','^',':','\"','\'','@','-']
 
@@ -154,8 +179,26 @@ def tokenize_corpus(path, train=True):
     # !! what if we didn't do this? - stem    
       tokens = [porter.stem(t) for t in tokens] 
 
+
+    # ---------------------------------------------------------
+    # EDIT THIS BIT TO USE BIGRAMS
     # !! add bigram collocations here
     # tokens = bigram_tokenize_corpus(tokens, BigramAssocMeasures.chi_sq, 200)
+    bigram_measures = nltk.collocations.BigramAssocMeasures()
+    # !! experiment with window size for accuracy
+    finder = BigramCollocationFinder.from_words(tokens, window_size = 4)
+    # !! experiment with frequency count for accuracy 
+    finder.apply_freq_filter(2)
+    # !! understand pmi filter 
+    # bigrams = finder.nbest(bigram_measures.pmi, 10)
+    
+    #for k,v in finder.ngram_fd.items():
+        #print(k,v)
+
+    #for k in finder.ngram_fd.items():
+      #print(k)
+
+    # ---------------------------------------------------------
 
     if train == True:
         # add to word count frequency
@@ -175,9 +218,9 @@ def tokenize_corpus(path, train=True):
   else:
      return(docs, classes, samples)
 
-
+# -----------------------------------------------------------------
 # In[ ]:
-
+# this is the bigram method - it needs major edits
  
 def bigram_tokenize_corpus(tokens, score_fn=BigramAssocMeasures.chi_sq, n=200):
     bigram_finder = BigramCollocationFinder.from_words(tokens)
@@ -189,7 +232,7 @@ def bigram_tokenize_corpus(tokens, score_fn=BigramAssocMeasures.chi_sq, n=200):
     return(tokens)
  
 # evaluate_classifier(bigram_word_feats)
-
+# -----------------------------------------------------------------
 
 # In[ ]:
 
@@ -210,6 +253,7 @@ def wordcount_filter(words, num=5):
 def find_wordcounts(docs, vocab):
    bagofwords = numpy.zeros(shape=(len(docs),len(vocab)), dtype=numpy.uint8)
    vocabIndex={}
+   # giving each vocab word an index value in a dictionary
    for i in range(len(vocab)):
       vocabIndex[vocab[i]]=i
 
@@ -218,12 +262,73 @@ def find_wordcounts(docs, vocab):
 
        for t in doc:
           index_t=vocabIndex.get(t)
+          # if the vocab word is present in the known words
           if index_t>=0:
+            # i is the doc number
+            # for a particular doc, increment count in bow matrix
              bagofwords[i,index_t]=bagofwords[i,index_t]+1
 
    print "Finished find_wordcounts for:", len(docs), "docs"
    return(bagofwords)
 
+# -----------------------------------------------------------------
+# In[ ]:
+# Working on TF - IDF
+
+
+def term_frequency(term, tokenized_document):
+    return tokenized_document.count(term)
+
+def sublinear_term_frequency(term, tokenized_document):
+    return 1 + math.log(tokenized_document.count(term))
+
+def augmented_term_frequency(term, tokenized_document):
+    max_count = max([term_frequency(t, tokenized_document) for t in tokenized_document])
+    return (0.5 + ((0.5 * term_frequency(term, tokenized_document))/max_count))
+
+def inverse_document_frequencies(tokenized_documents):
+    idf_values = {}
+    all_tokens_set = set([item for sublist in tokenized_documents for item in sublist])
+    for tkn in all_tokens_set:
+        contains_token = map(lambda doc: tkn in doc, tokenized_documents)
+        idf_values[tkn] = 1 + math.log(len(tokenized_documents)/(sum(contains_token)))
+    return idf_values
+
+def find_tfidf(docs, vocab):
+   idf = inverse_document_frequencies(docs)
+   bagofwords = numpy.zeros(shape=(len(docs),len(vocab)), dtype=numpy.uint8)
+   vocabIndex={}
+   # giving each vocab word an index value in a dictionary
+   for i in range(len(vocab)):
+      vocabIndex[vocab[i]]=i
+
+   for i in range(len(docs)):
+       doc = docs[i]
+       for t in doc:
+          tf = sublinear_term_frequency(t, doc)
+          index_t=vocabIndex.get(t)
+          # if the vocab word is present in the known words
+          if index_t>=0:
+            # i is the doc number
+            # for a particular doc, enter tfidf score
+             bagofwords[i,index_t]= (tf * idf[t])
+
+   print "Finished find_tfidf for:", len(docs), "docs"
+   # print bagofwords
+   # return(bagofwords)
+
+   idf = inverse_document_frequencies(docs)
+   tfidf_documents = []
+   for document in docs:
+      doc_tfidf = []
+      for term in idf.keys():
+         tf = augmented_term_frequency(term, document)
+         doc_tfidf.append(tf * idf[term])
+      tfidf_documents.append(doc_tfidf)
+   
+   return tfidf_documents
+
+# -----------------------------------------------------------------
 
 # In[ ]:
 
@@ -283,10 +388,32 @@ def main(argv):
   # Check: sum over docs to check if any zero word counts
   print "Doc with smallest number of words in vocab has:", min(numpy.sum(bow, axis=1))
 
+  # -----------------------------------------------------------
+  # Get tfidf
+  # tfidf_representation = find_tfidf(docs, vocab)
+
+  # Use SkiKit learn for tf-idf
+  # sklearn_tfidf = TfidfVectorizer(norm='l2',min_df=0, use_idf=True, smooth_idf=False, sublinear_tf=True)
+
+  # sklearn_representation = sklearn_tfidf.fit_transform(docs)
+  # print sklearn_representation.toarray()[0].tolist()
+  transformer = TfidfTransformer(smooth_idf=False)
+  tfidf = transformer.fit_transform(bow)
+  tfidf.todense()
+  scipy.sparse.save_npz(outputf+"_tfidf_"+str(word_count_threshold)+".npz", tfidf)
+  # print(numpy.matrix(tfidf))
+  # print tfidf
+  
+
   # Write bow file
   with open(path+"/"+outputf+"_bag_of_words_"+str(word_count_threshold)+".csv", "wb") as f:
     writer = csv.writer(f)
     writer.writerows(bow)
+
+  # Write tfidf file - !!! problem: currently doesn't record all values 
+  #with open(path+"/"+outputf+"_tfidf_"+str(word_count_threshold)+".csv", "wb") as f:
+    #writer = csv.writer(f)
+    #writer.writerows(tfidf)
 
   # Write classes
   outfile = open(path+"/"+outputf+"_classes_"+str(word_count_threshold)+".txt", 'w')
